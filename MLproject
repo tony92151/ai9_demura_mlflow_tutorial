@@ -1,0 +1,21 @@
+name: My Project
+
+conda_env: a19_conda_env.yaml
+
+# Can have a docker_env instead of a conda_env, e.g.
+# docker_env:
+#    image:  mlflow-docker-example
+
+entry_points:
+  run:
+    parameters:
+      MLFLOW_EXPERIMENT_NAME : {type: str, default: test_001}
+      PARENT_ID : {type: str, default: p1}
+
+    command: "python3 a19_test.py"
+
+  bashrun:
+    parameters:
+      MLFLOW_EXPERIMENT_NAME : {type: str, default: test_001}
+      PARENT_ID : {type: str, default: p1}
+    command: "bash run.sh"
