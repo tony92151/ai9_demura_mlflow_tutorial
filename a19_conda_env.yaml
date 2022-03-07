@@ -6,9 +6,9 @@ dependencies:
   - pandas>=1.0.0
   - scikit-learn=0.19.1
   - boto3
-  - git+ssh://git@repo.a19.center/a19/mlflow.git@a19_1.24.1.dev0
   - pip
   - pip:
+    - "--editable=git+ssh://git@repo.a19.center/a19/mlflow.git@a19_1.24.1.dev0"
     - torch==1.8.1
     - torchvision==0.9.1
     - tensorboard
