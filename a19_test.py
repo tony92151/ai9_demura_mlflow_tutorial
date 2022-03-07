@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     log_artifacts("outputs")
 
-    #mlflow.pytorch.set_log_model_display_name(display_name="test")
+    mlflow.pytorch.set_log_model_display_name(display_name="test")
     mlflow.pytorch.log_model(LinearNNModel(), "model1")
 
     mlflow.end_run()
