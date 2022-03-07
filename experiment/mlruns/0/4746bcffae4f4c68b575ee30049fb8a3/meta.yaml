@@ -1,0 +1,15 @@
+artifact_uri: file:///home/tedbest/datadisk/a19/ai9_demura_mlflow_tutorial/experiment/mlruns/0/4746bcffae4f4c68b575ee30049fb8a3/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 4746bcffae4f4c68b575ee30049fb8a3
+run_uuid: 4746bcffae4f4c68b575ee30049fb8a3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1646634192512
+status: 1
+tags: []
+user_id: tedbest

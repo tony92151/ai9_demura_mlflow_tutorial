@@ -43,7 +43,7 @@ from sklearn import metrics
 #####
 from mlflow import mlflow, log_metric, log_param, log_artifacts
 import sys
-sys.path.append("..")
+sys.path.append(".")
 import experiment.augumentation as aug
 #####
 
@@ -121,10 +121,9 @@ def get_data_info(t, l, image_info):
     res = []
     image_info = image_info[(image_info["train_type"] == t) & (image_info["label"] == l)]
 
-    for path, img, label, JND, t in zip(image_info["path"], image_info["name"], image_info["label"],
-                                        image_info["MULTI_JND"], image_info["train_type"]):
+    for path, img, label in zip(image_info["path"], image_info["name"], image_info["label"]):
         img_path = os.path.join(os.path.dirname(csv_path), path, img)
-        res.append([img_path, label, JND, t])
+        res.append([img_path, label])
     X = []
     Y = []
     for d in res:
@@ -270,14 +269,14 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
                 # del labels
             if phase == "train":
                 scheduler.step()
-                log_metric("learning rate", scheduler.get_lr(), step=epoch)
+                #log_metric("learning rate", scheduler.get_lr(), step=epoch)
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
             p, r = calc_cm(pred_list, gts)
 
-            log_metric("({})epoch_loss".format(phase), epoch_loss, step=epoch)
-            log_metric("({})epoch_acc".format(phase), epoch_acc, step=epoch)
+            log_metric("{}_epoch_loss".format(phase), epoch_loss, step=epoch)
+            log_metric("{}_epoch_acc".format(phase), float(epoch_acc.cpu()), step=epoch)
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
@@ -309,7 +308,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
 
 if __name__ == "__main__":
 
-    csv_path = "/home/tedbest/datadisk/a19/repo_to_upload/ai9_mura_dataset_2022_backup2/data1_trainable_258/data_merged.csv"
+    csv_path = "/home/tedbest/datadisk/a19/repo_to_upload/ai9_mura_dataset_2022_backup2/20210901_merged/data_merged.csv"
     image_info = pd.read_csv(csv_path)
 
     ds = get_ds(image_info)
@@ -341,7 +340,7 @@ if __name__ == "__main__":
         mod = mod.to(device)
         criterion = nn.BCEWithLogitsLoss()
 
-        EPOCHS = 10
+        EPOCHS = 5
 
         LR = 2e-4*i
         optimizer = optim.Adam(mod.parameters(), lr=2e-4*i)
