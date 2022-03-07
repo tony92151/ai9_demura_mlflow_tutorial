@@ -19,3 +19,7 @@ entry_points:
       MLFLOW_EXPERIMENT_NAME : {type: str, default: test_001}
       PARENT_ID : {type: str, default: p1}
     command: "bash run.sh"
+
+  demurarun:
+    parameters:
+    command: "python3 experiment/a19_demura_test.py"
