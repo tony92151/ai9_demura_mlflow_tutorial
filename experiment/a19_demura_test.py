@@ -84,7 +84,7 @@ print(f'Using {device} for inference')
 
 # transforms_resize = transforms.Resize([512, 512], interpolation=InterpolationMode.BILINEAR)
 
-def get_data_transforms(resize=256, aug="wei_augumentation"):
+def get_data_transforms(resize=256, augumentation="wei_augumentation"):
     aug_dic = {
         "wei_augumentation": aug.wei_augumentation
     }
@@ -94,12 +94,12 @@ def get_data_transforms(resize=256, aug="wei_augumentation"):
             transforms.Resize([resize, resize], interpolation=InterpolationMode.BILINEAR),
             transforms.RandomHorizontalFlip(),
             transforms.RandomVerticalFlip(),
-            aug_dic[aug](),
+            aug_dic[augumentation](),
             transforms.ToTensor(),
         ]),
         "test": transforms.Compose([
             transforms.Resize([resize, resize], interpolation=InterpolationMode.BILINEAR),
-            aug_dic[aug](),
+            aug_dic[augumentation](),
             transforms.ToTensor()
         ])
     }
