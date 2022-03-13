@@ -363,9 +363,9 @@ if __name__ == "__main__":
         optimizer = optim.Adam(mod.parameters(), lr=2e-4 * i)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=int(EPOCHS / 5), eta_min=2e-7)
 
-        model_ft = train_model(mod, criterion, optimizer, scheduler, num_epochs=EPOCHS)
+        # model_ft = train_model(mod, criterion, optimizer, scheduler, num_epochs=EPOCHS)
 
-        torch.save(model_ft, os.path.join(output, "model_ft_{}.pt".format(i)))
+        # torch.save(model_ft, os.path.join(output, "model_ft_{}.pt".format(i)))
 
         mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
         mlflow.pytorch.log_model(mod)
