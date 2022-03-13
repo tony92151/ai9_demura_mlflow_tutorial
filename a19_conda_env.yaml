@@ -16,3 +16,9 @@ dependencies:
     - pretrainedmodels
     - vit_pytorch
     - opencv-python
+    - matplotlib
+    - pandas
+    - tensorflow
+    - tensorflow_addons
+    - vit_pytorch
+    - sklearn
