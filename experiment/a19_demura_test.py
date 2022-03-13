@@ -342,6 +342,10 @@ if __name__ == "__main__":
         experiment_name=args.experiment_name,
         parent_run_name=args.parent_name
     )
+    print("#" * 30)
+    print("Experiment:", args.experiment_name)
+    print("Parent name:", args.parent_name)
+    print("#" * 30)
 
     ###############
     for i in range(5):
@@ -367,8 +371,9 @@ if __name__ == "__main__":
 
         # torch.save(model_ft, os.path.join(output, "model_ft_{}.pt".format(i)))
 
-        mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
-        mlflow.pytorch.log_model(mod, "model")
+        log_param("test", 123)
+        #mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
+        #mlflow.pytorch.log_model(mod, "model")
 
         mlflow.end_run()
 
