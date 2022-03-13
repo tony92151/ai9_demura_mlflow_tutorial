@@ -314,7 +314,7 @@ if __name__ == "__main__":
     parser.add_argument('--csv_dataset', type=str, default="./data_merged.csv")
     parser.add_argument('--experiment_name', type=str, default=None)
     parser.add_argument('--parent_name', type=str, default=None)
-    parser.add_argument('--output', type=str, default=None)
+    parser.add_argument('--output', type=str, default="./output")
     args = parser.parse_args()
 
     # csv_path = "/home/tedbest/datadisk/a19/repo_to_upload/ai9_mura_dataset_2022_backup2/20220210_merged_258/data_merged.csv"
