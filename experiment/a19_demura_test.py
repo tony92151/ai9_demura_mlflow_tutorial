@@ -313,7 +313,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--csv_dataset', type=str, default="./data_merged.csv")
     parser.add_argument('--experiment_name', type=str, default=None)
-    parser.add_argument('--parent_name', type=str, default=None)
+    parser.add_argument('--parent_name', type=str, default="parent")
     parser.add_argument('--output', type=str, default="./output")
     args = parser.parse_args()
 
