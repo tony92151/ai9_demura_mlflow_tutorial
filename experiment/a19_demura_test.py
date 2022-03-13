@@ -30,6 +30,7 @@ import random
 import tensorflow as tf
 import tensorflow_addons as tfa
 from PIL import ImageFile
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 from vit_pytorch import ViT
 from sklearn.metrics import balanced_accuracy_score
@@ -40,11 +41,14 @@ from collections import defaultdict
 from sklearn.metrics import balanced_accuracy_score
 from sklearn import metrics
 
+import argparse
 #####
 from mlflow import mlflow, log_metric, log_param, log_artifacts
 import sys
+
 sys.path.append(".")
 import experiment.augumentation as aug
+
 #####
 
 
@@ -52,14 +56,13 @@ print(tf.__version__)
 print(torch.__version__)
 gpus = tf.config.experimental.list_physical_devices('GPU')
 
+
 def setup_seed(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
-
-setup_seed(42)
 
 
 gpus = tf.config.list_physical_devices('GPU')
@@ -75,28 +78,31 @@ if gpus:
         # Virtual devices must be set before GPUs have been initialized
         print(e)
 
-
-
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 print(f'Using {device} for inference')
 
 
-transforms_resize = transforms.Resize([512, 512], interpolation=InterpolationMode.BILINEAR)
+# transforms_resize = transforms.Resize([512, 512], interpolation=InterpolationMode.BILINEAR)
 
-data_transforms = {
-    "train": transforms.Compose([
-        transforms.Resize([256, 256], interpolation=InterpolationMode.BILINEAR),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),
-        aug.wei_augumentation(),
-        transforms.ToTensor(),
-    ]),
-    "test": transforms.Compose([
-        transforms.Resize([512, 512], interpolation=InterpolationMode.BILINEAR),
-        aug.wei_augumentation(),
-        transforms.ToTensor()
-    ])
-}
+def get_data_transforms(resize=256, aug="wei_augumentation"):
+    aug_dic = {
+        "wei_augumentation": aug.wei_augumentation
+    }
+
+    return {
+        "train": transforms.Compose([
+            transforms.Resize([resize, resize], interpolation=InterpolationMode.BILINEAR),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
+            aug_dic[aug](),
+            transforms.ToTensor(),
+        ]),
+        "test": transforms.Compose([
+            transforms.Resize([resize, resize], interpolation=InterpolationMode.BILINEAR),
+            aug_dic[aug](),
+            transforms.ToTensor()
+        ])
+    }
 
 
 # In[14]:
@@ -115,8 +121,6 @@ class AI9_Dataset(Dataset):
         return self.transform(self.X[idx]), self.Y[idx]
 
 
-
-
 def get_data_info(t, l, image_info):
     res = []
     image_info = image_info[(image_info["train_type"] == t) & (image_info["label"] == l)]
@@ -132,8 +136,9 @@ def get_data_info(t, l, image_info):
 
     dataset = AI9_Dataset(feature=X,
                           target=Y,
-                          transform=data_transforms[t])
+                          transform=get_data_transforms(256, "wei_augumentation"))
     return dataset
+
 
 def get_ds(image_info):
     ds = defaultdict(dict)
@@ -145,7 +150,6 @@ def get_ds(image_info):
                 l = 0
             ds[x][y] = get_data_info(x, l, image_info)
     return ds
-
 
 
 def make_training_dataloader(ds):
@@ -269,7 +273,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
                 # del labels
             if phase == "train":
                 scheduler.step()
-                #log_metric("learning rate", scheduler.get_lr(), step=epoch)
+                # log_metric("learning rate", scheduler.get_lr(), step=epoch)
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
@@ -296,19 +300,25 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
     print("Best test Acc: {:4f}".format(best_acc))
 
     log_metric("Best test Acc", best_acc)
-    #log_metric("Training time",  "{:.0f}m {:.0f}s".format(time_elapsed // 60, time_elapsed % 60))
+    # log_metric("Training time",  "{:.0f}m {:.0f}s".format(time_elapsed // 60, time_elapsed % 60))
 
-    #mlflow.pytorch.set_log_model_display_name(display_name="a19_model")
+    # mlflow.pytorch.set_log_model_display_name(display_name="a19_model")
     mlflow.pytorch.log_model(best_model_wts, "model")
 
     model.load_state_dict(best_model_wts)
     return model
 
 
-
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--csv_dataset', type=str, default="./data_merged.csv")
+    parser.add_argument('--experiment_name', type=str, default=None)
+    parser.add_argument('--parent_name', type=str, default=None)
+    parser.add_argument('--output', type=str, default=None)
+    args = parser.parse_args()
 
-    csv_path = "/home/tedbest/datadisk/a19/repo_to_upload/ai9_mura_dataset_2022_backup2/20210901_merged/data_merged.csv"
+    # csv_path = "/home/tedbest/datadisk/a19/repo_to_upload/ai9_mura_dataset_2022_backup2/20220210_merged_258/data_merged.csv"
+    csv_path = args.csv_dataset
     image_info = pd.read_csv(csv_path)
 
     ds = get_ds(image_info)
@@ -318,17 +328,24 @@ if __name__ == "__main__":
         "test": make_test_dataloader(ds)
     }
 
-    output = "./output"
+    # output = "./output"
+    output = args.output
     os.makedirs(output, exist_ok=True)
 
     dataset_sizes = {x: len(dataloaders[x].dataset) for x in ["train", "test"]}
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+    setup_seed(42)
+
     ###############
-    mlflow.start_run(run_name="parent")
+    mlflow.a19_parent_run(
+        experiment_name=args.experiment_name,
+        parent_run_name=args.parent_name
+    )
+
     ###############
     for i in range(5):
-        mlflow.start_run(run_name="child_{}".format(i), nested=True)
+        mlflow.a19_child_run(child_run_name="child_{}".format(i))
 
         mod = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', "nvidia_resnet50")
         mod.fc = nn.Sequential(
@@ -342,18 +359,17 @@ if __name__ == "__main__":
 
         EPOCHS = 5
 
-        LR = 2e-4*i
-        optimizer = optim.Adam(mod.parameters(), lr=2e-4*i)
+        LR = 2e-4 * i
+        optimizer = optim.Adam(mod.parameters(), lr=2e-4 * i)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=int(EPOCHS / 5), eta_min=2e-7)
 
         model_ft = train_model(mod, criterion, optimizer, scheduler, num_epochs=EPOCHS)
 
         torch.save(model_ft, os.path.join(output, "model_ft_{}.pt".format(i)))
 
+        mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
+        mlflow.pytorch.log_model(mod)
+
         mlflow.end_run()
 
     mlflow.end_run()
-
-
-
-

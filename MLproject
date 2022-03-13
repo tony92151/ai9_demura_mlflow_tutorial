@@ -22,4 +22,10 @@ entry_points:
 
   demurarun:
     parameters:
-    command: "python3 experiment/a19_demura_test.py"
+        csv_dataset: {type: str}
+        experiment_name: {type: str}
+        parent_name: {type: str}
+    command: "python3 experiment/a19_demura_test.py \
+                            --csv_dataset {exp_type} \
+                            --experiment_name {experiment_name} \
+                            --parent_name {parent_name}"
