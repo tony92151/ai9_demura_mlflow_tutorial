@@ -296,9 +296,9 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
     print("Best test Acc: {:4f}".format(best_acc))
 
     log_metric("Best test Acc", best_acc)
-    log_metric("Training time",  "{:.0f}m {:.0f}s".format(time_elapsed // 60, time_elapsed % 60))
+    #log_metric("Training time",  "{:.0f}m {:.0f}s".format(time_elapsed // 60, time_elapsed % 60))
 
-    mlflow.pytorch.set_log_model_display_name(display_name="a19_model")
+    #mlflow.pytorch.set_log_model_display_name(display_name="a19_model")
     mlflow.pytorch.log_model(best_model_wts, "model")
 
     model.load_state_dict(best_model_wts)
