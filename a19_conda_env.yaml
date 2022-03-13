@@ -21,4 +21,4 @@ dependencies:
     - tensorflow
     - tensorflow_addons
     - vit_pytorch
-    - sklearn
+    - scikit-learn==0.24.0
