@@ -338,6 +338,7 @@ if __name__ == "__main__":
     setup_seed(42)
 
     ###############
+    mlflow.a19_set_force_record(force=True)
     mlflow.a19_parent_run(
         experiment_name=args.experiment_name,
         parent_run_name=args.parent_name
