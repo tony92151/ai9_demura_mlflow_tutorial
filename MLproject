@@ -29,3 +29,6 @@ entry_points:
                             --csv_dataset {csv_dataset} \
                             --experiment_name {experiment_name} \
                             --parent_name {parent_name}"
+
+  testrun:
+    command:"python3 a19_test.py"
