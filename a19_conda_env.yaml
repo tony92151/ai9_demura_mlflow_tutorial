@@ -8,7 +8,7 @@ dependencies:
   - boto3
   - pip
   - pip:
-    - "--editable=git+ssh://git@repo.a19.center/a19/mlflow.git@a19_1.24.1.dev1#egg=mlflow"
+    - "--editable=git+ssh://git@repo.a19.center/a19/mlflow.git@a19_1.24.1.dev3#egg=mlflow"
     - torch==1.8.1
     - torchvision==0.9.1
     - tensorboard

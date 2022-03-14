@@ -372,7 +372,7 @@ if __name__ == "__main__":
         # torch.save(model_ft, os.path.join(output, "model_ft_{}.pt".format(i)))
 
         log_param("test", 123)
-        #mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
+        mlflow.pytorch.set_log_model_display_name("model_{}".format(i))
         #mlflow.pytorch.log_model(mod, "model")
 
         mlflow.end_run()
