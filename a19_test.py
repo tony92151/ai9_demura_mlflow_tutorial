@@ -27,8 +27,13 @@ if __name__ == "__main__":
     # mlflow.set_tracking_uri('http://localhost:5000')
     print("Running mlflow_tracking.py")
 
-    mlflow.start_run(run_name="parent")
-    mlflow.start_run(run_name="child", nested=True)
+    # mlflow.start_run(run_name="parent")
+    # mlflow.start_run(run_name="child", nested=True)
+
+    mlflow.a19_set_force_record(force=True)
+    mlflow.a19_parent_run("test3-18", "p1")
+    mlflow.a19_child_run("c1")
+
 
     mlflow.log_param("learning rate", 0.1)
     mlflow.log_param("path", "./data")
