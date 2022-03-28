@@ -30,8 +30,8 @@ if __name__ == "__main__":
     # mlflow.start_run(run_name="parent")
     # mlflow.start_run(run_name="child", nested=True)
 
-    mlflow.a19_set_force_record(force=True)
-    mlflow.a19_parent_run("test3-18", "p1")
+    # mlflow.a19_set_force_record(force=True)
+    mlflow.a19_parent_run("test3-18", "p2")
     mlflow.a19_child_run("c1")
 
 
